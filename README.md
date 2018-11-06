@@ -1,87 +1,70 @@
-# Plotting a chart
+# Renê's Challenge
 
-In this challenge, you will implement a web application that plots a line chart based on some manually input data.
+In this challenge, i developed a web application that plots a line chart based on some manually input data.
 
-The input data is a sequence of events. This sequence represents the output of a query, which is omitted for simplicity. The data will be manually input by the final user instead. Based on the input sequence of events, you may generate a time based line chart containing one or more series.
+The input data is a sequence of events. The data will be manually input by the final user. Based on the input sequence of events, you may generate a time based line chart containing one or more series.
 
-## Definitions
-An event is a set of keys and values. For this challenge, it will be represented as a JSON. 
+this app is not the full version as it was asked. As i am new to programming i would need a little more time to implement all functions. with that said i made the choice of focusing on delivering something that worked and would still allow you to avaluate my ability and familiarity with tools and best practices.
 
-```
-{a: 1, b: 2}
-```
+As it is the app can:
 
-On our system, each event has two mandatory fields: timestamp and type. All other fields are optional.
+-   take inputs
+-   render dynamic input fields according to whats asked in the start input after it is submitted
+-   render the inputs as html
+-   and, if the inputs are made correctly, dynamicly generate a chart on the push of a button.
 
-* *timestamp* field holds the moment that the event refers to. It is formatted as a regular [Javascript timestamp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+## Installation
 
-* *type* field holds the definition of what is represented on each event. Its value can be one of the following:
+requires node.js
 
-### start
-Events of type *start* define that a new sequence of data events will follow, along with the fields that may be plotted and their grouping. A group is a category for splitting the same variable into different series.
+1. Run "npm install" in the folder
+2. Run "npm start" to view the project
 
-Example:
-```
-{type: 'start', timestamp: 1519780251293, select: ['min_response_time', 'max_response_time'], group: ['os', 'browser']}
-```
-The above event defines that, for each different value of the pair (os, browser), we may plot two lines: one that represents the minimum response time, and one that represents the maximum response time. That is: if there are two different values for os and two different values for browser, we should have 8 different lines plotted.
+## Observations
 
-### span
-Events of type *span* define what is the visible date range for the chart. A new event of this type may make the chart update its boundaries.
+-   right now the chart only uses the inputs from start and data to be generated, but i understand that timestamp, span and stop should act on it as well
+-   it can only take one 'start', but multiple 'data' events
+-   i am confident that with a little more time i could implement all the functionalities, i didn't get stuck on any part but i did take some time to figure out the logic behind it, and because this was my first time developing an app like this i didn't estimate the time correctly.
+-   i didn't have time to write tests, and that is something i am still learning, i have some knowledge of jest but very little
+-   i am also not familiar with the methods to protect the app to deal with huge amounts of data
 
-Example:
-```
-{type: 'span', timestamp: 1519780251293, begin: 1519780251293, end: 1519780260201}
-```
-This event defines that the data should be plotted inside the interval between the begin and end values, that is, timestamps 1519780251293 and 1519780260201, respectivelly. All data outside this range may be ignored.
+## How to use
 
-### stop
-Events of type *stop* define that no more data events will follow.
-A *stop* event is generated after loading a static timespan in the past, or if the user explicitly stops the query. If the chart consumes real time data, it might never be generated.
-Any events that eventually follow a *stop* event should be ignored, except for a new *start*, which would imply the creation of a new chart.
+1. select the type of event
+2. on event 'start' add the groups and selects as if completing the array (use single quotes) EX: 'min_response_time', 'max_response_time'
+   press ENTER to submit
+3. even though it wont affect the chart, you can select 'span' and render this event
+4. select 'data'. you will see that the answers from 'start' are here rendered as input fields (inputs can be written without quotes)
+5. just like 'span' the 'stop' wont affect the chart, but you can select to reset part of the state and reset 'data'
+6. when you are done, press the button 'generate chart' to make the chart component render
 
-Example:
-```
-{type: 'stop', timestamp: 1519780251293}
-```
+## Features
 
-### data
-Events of type *data* define the content that might be displayed on the chart.
+-   project created usin create react app
+-   react-chartjs-2 used to generate chart
 
-Example
-```
-{type: 'data', timestamp: 1519780251000, os: 'linux', browser: 'chrome', min_response_time: 0.1, max_response_time: 1.3}
-```
+## Design Choices
 
-> Note that absent data values for the fields defined by *select* and *group* also generate new series. On the other hand, fields that are not defined should be ignored.
+I added a input component to make it easier for the user to input the data and for tha app to deal with it.
 
-## The challenge
+as it is not a function that is not essencial for the app to be functional i chose to leave 'draggable to resize' functionallity behind for now
 
-We expect you to:
+## Possible Future
 
-* Provide an input on the user interface to allow plotting different sequences of events;
-* Based on an arbitrary sequence of events, plot the chart that represents the output for that sequence;
-* Follow the layout indication provided on the prototype below;
-* Write tests;
-* Suggest and implement a protection for this application to deal with huge amount of data;
-* Justify design choices, arguing about costs and benefits involved. You may write those as comments inline or, if you wish, provide a separate document summarizing those choices;
-* Write all code and documentation in english
+If i were to continue developing the app a would:
 
-![challenge_frontend](https://github.com/intelie/challenge-chart-plot/raw/master/challenge_frontend.png "Expected user interface")
+add verification to the input fields to make shure it is written conrrectly
 
-Although you can choose any graphical library to plot the chart, we suggest that you use a declarative JS framework to build the application such as ReactJS.
+make it possible to delete an input that was submitted incorrectly
 
-## Solve this challenge
+make the span and stop events fully functional
 
-To solve this challenge, you may fork this repository, then
-send us a link with your implementation. Alternatively, if you do not want to have this repo on
-your profile (we totally get it), send us a
-[git patch file](https://www.devroom.io/2009/10/26/how-to-create-and-apply-a-patch-with-git/)
-with your changes.
+fix the chart's height
 
-There is no unique solution to this challenge. The intent is to evaluate candidate's ability and familiarity with tools and best practices.
+add propTypes to make it less vulnerable
 
-If you are already in the hiring process, you may send it to whoever is your contact at Intelie. If you wish to apply for a job at Intelie, please send your solution to [trabalhe@intelie.com.br](mailto:trabalhe@intelie.com.br).
+make it possible to generate multiple charts based on the different 'start' events
 
+render an empty chart if there was no data input yet
 
-
+write tests
